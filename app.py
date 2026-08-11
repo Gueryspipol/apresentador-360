@@ -1,4 +1,8 @@
 import streamlit as st
+import tempfile
+
+from motor import encontrar_operadoras
+
 
 st.set_page_config(
     page_title="Apresentador 360",
@@ -15,33 +19,28 @@ arquivo_matriz = st.file_uploader(
     "Selecione a Matriz preenchida",
     type=["xlsx"]
 )
-import tempfile
-from motor import encontrar_operadoras
-``
-with tempfile.NamedTemporaryFile(
-    delete=False,
-    suffix=".xlsx"
-) as temp_file:
 
-    temp_file.write(
-        arquivo_matriz.read()
-    )
-
-    caminho_matriz = temp_file.name
-
-operadoras = encontrar_operadoras(
-    caminho_matriz
-)
-operadoras = encontrar_operadoras(
-    caminho_matriz
-)
-if arquivo_matriz:
+if arquivo_matriz is not None:
 
     st.success("Matriz carregada com sucesso!")
 
+    with tempfile.NamedTemporaryFile(
+        delete=False,
+        suffix=".xlsx"
+    ) as temp_file:
+
+        temp_file.write(
+            arquivo_matriz.read()
+        )
+
+        caminho_matriz = temp_file.name
+
+    operadoras = encontrar_operadoras(
+        caminho_matriz
+    )
+
     st.subheader("Operadoras encontradas")
 
-    
     selecionadas = st.multiselect(
         "Selecione até 4 operadoras",
         operadoras,
@@ -54,9 +53,7 @@ if arquivo_matriz:
 
         ordem = []
 
-        for i in range(
-            len(selecionadas)
-        ):
+        for i in range(len(selecionadas)):
 
             escolha = st.selectbox(
                 f"{i+1}ª Operadora",
@@ -67,12 +64,11 @@ if arquivo_matriz:
             ordem.append(escolha)
 
         st.write("Ordem escolhida:")
-
         st.write(ordem)
 
         if st.button(
             "🚀 Gerar Apresentação"
         ):
             st.success(
-                "Próxima etapa: integrar motor.py"
+                "Motor conectado com sucesso."
             )

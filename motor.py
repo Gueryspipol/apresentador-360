@@ -42,7 +42,7 @@ def encontrar_operadoras(arquivo_excel):
 
                 for operadora in operadoras_conhecidas:
 
-                    if operadora.lower() in valor.lower():
+                    if valor.strip().lower() == operadora.lower():
 
                         operadoras.add(
                             operadora

@@ -52,4 +52,3 @@ def encontrar_operadoras(arquivo_excel):
     return sorted(
         list(operadoras)
     )
-``

@@ -10,17 +10,17 @@ def encontrar_operadoras(arquivo_excel):
 
     operadoras = set()
 
-   operadoras_conhecidas = [
-    "Amil Selecionada",
-    "Amil Metal",
-    "Bradesco",
-    "SulAmérica",
-    "Sulamerica",
-    "Omint",
-    "Hapvida",
-    "Seguros Unimed",
-    "Porto Seguro"
-]
+    operadoras_conhecidas = [
+        "Amil Selecionada",
+        "Amil Metal",
+        "Bradesco",
+        "SulAmérica",
+        "Sulamerica",
+        "Omint",
+        "Hapvida",
+        "Seguros Unimed",
+        "Porto Seguro",
+    ]
 
     for aba in wb.sheetnames:
 
@@ -42,7 +42,7 @@ def encontrar_operadoras(arquivo_excel):
 
                 for operadora in operadoras_conhecidas:
 
-                    if valor.strip().lower() == operadora.lower():
+                    if valor.lower() == operadora.lower():
 
                         operadoras.add(
                             operadora

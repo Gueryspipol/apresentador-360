@@ -16,18 +16,22 @@ arquivo_matriz = st.file_uploader(
     type=["xlsx"]
 )
 import tempfile
-
+from motor import encontrar_operadoras
+``
 with tempfile.NamedTemporaryFile(
     delete=False,
     suffix=".xlsx"
 ) as temp_file:
 
     temp_file.write(
-        arquivo_matriz.getvalue()
+        arquivo_matriz.read()
     )
 
     caminho_matriz = temp_file.name
 
+operadoras = encontrar_operadoras(
+    caminho_matriz
+)
 operadoras = encontrar_operadoras(
     caminho_matriz
 )

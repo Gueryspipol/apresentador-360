@@ -22,15 +22,9 @@ if arquivo_matriz:
 
     st.subheader("Operadoras encontradas")
 
-    operadoras = [
-        "Amil Selecionada",
-        "Amil Metal",
-        "Bradesco",
-        "SulAmérica",
-        "Omint",
-        "Seguros Unimed",
-        "Hapvida",
-    ]
+    operadoras = encontrar_operadoras(
+    matriz_temp
+)
 
     selecionadas = st.multiselect(
         "Selecione até 4 operadoras",

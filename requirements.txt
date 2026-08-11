@@ -4,4 +4,3 @@ openpyxl
 python-pptx
 xlsxwriter
 numpy
-`

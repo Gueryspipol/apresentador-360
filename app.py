@@ -15,17 +15,29 @@ arquivo_matriz = st.file_uploader(
     "Selecione a Matriz preenchida",
     type=["xlsx"]
 )
+import tempfile
 
+with tempfile.NamedTemporaryFile(
+    delete=False,
+    suffix=".xlsx"
+) as temp_file:
+
+    temp_file.write(
+        arquivo_matriz.getvalue()
+    )
+
+    caminho_matriz = temp_file.name
+
+operadoras = encontrar_operadoras(
+    caminho_matriz
+)
 if arquivo_matriz:
 
     st.success("Matriz carregada com sucesso!")
 
     st.subheader("Operadoras encontradas")
 
-    operadoras = encontrar_operadoras(
-    matriz_temp
-)
-
+    
     selecionadas = st.multiselect(
         "Selecione até 4 operadoras",
         operadoras,

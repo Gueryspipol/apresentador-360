@@ -1,4 +1,13 @@
+import os
+import shutil
+import tempfile
+
 from openpyxl import load_workbook
+
+
+TEMPLATE_EXCEL = (
+    "Excel para alimentar o powerpoint - Preenchido.xlsx"
+)
 
 
 def encontrar_operadoras(arquivo_excel):
@@ -15,19 +24,20 @@ def encontrar_operadoras(arquivo_excel):
         "Amil Metal",
         "Bradesco",
         "SulAmérica",
-        "Sulamerica",
         "Omint",
         "Hapvida",
         "Seguros Unimed",
-        "Porto Seguro",
     ]
 
-    for aba in wb.sheetnames:
+    for nome_aba in [
+        "Matriz FX Et. C COPART",
+        "Matriz FX Et. S COPART",
+    ]:
 
-        if "Matriz FX" not in aba:
+        if nome_aba not in wb.sheetnames:
             continue
 
-        ws = wb[aba]
+        ws = wb[nome_aba]
 
         for row in ws.iter_rows():
 
@@ -42,14 +52,160 @@ def encontrar_operadoras(arquivo_excel):
 
                 for operadora in operadoras_conhecidas:
 
-                    if valor.lower() == operadora.lower():
-
+                    if (
+                        valor.casefold()
+                        == operadora.casefold()
+                    ):
                         operadoras.add(
                             operadora
                         )
 
     wb.close()
 
-    return sorted(
-        list(operadoras)
+    ordem_preferencial = [
+        "Amil Selecionada",
+        "Amil Metal",
+        "Bradesco",
+        "Hapvida",
+        "Omint",
+        "SulAmérica",
+        "Seguros Unimed",
+    ]
+
+    return [
+        operadora
+        for operadora in ordem_preferencial
+        if operadora in operadoras
+    ]
+
+
+def gerar_excel_final(
+    caminho_matriz,
+    operadoras_em_ordem
+):
+    """
+    Primeira integração da aplicação.
+
+    Nesta versão:
+    1. valida a matriz;
+    2. valida as operadoras escolhidas;
+    3. cria uma cópia independente do Excel modelo;
+    4. grava a ordem das operadoras no arquivo;
+    5. devolve o caminho para download.
+
+    O preenchimento completo das abas será conectado
+    nesta mesma função, sem arquivos 7A, 7B, 7C ou 7D.
+    """
+
+    if not os.path.exists(caminho_matriz):
+        raise FileNotFoundError(
+            "A matriz temporária não foi encontrada."
+        )
+
+    if not os.path.exists(TEMPLATE_EXCEL):
+        raise FileNotFoundError(
+            "O Excel modelo não foi encontrado no projeto: "
+            f"{TEMPLATE_EXCEL}"
+        )
+
+    if not operadoras_em_ordem:
+        raise ValueError(
+            "Selecione pelo menos uma operadora."
+        )
+
+    if len(operadoras_em_ordem) > 4:
+        raise ValueError(
+            "Selecione no máximo quatro operadoras."
+        )
+
+    if (
+        len(operadoras_em_ordem)
+        != len(set(operadoras_em_ordem))
+    ):
+        raise ValueError(
+            "Não é permitido repetir operadoras."
+        )
+
+    operadoras_encontradas = encontrar_operadoras(
+        caminho_matriz
     )
+
+    invalidas = [
+        operadora
+        for operadora in operadoras_em_ordem
+        if operadora not in operadoras_encontradas
+    ]
+
+    if invalidas:
+        raise ValueError(
+            "As seguintes operadoras não foram "
+            f"encontradas na matriz: {invalidas}"
+        )
+
+    pasta_saida = tempfile.mkdtemp(
+        prefix="apresentador360_"
+    )
+
+    caminho_saida = os.path.join(
+        pasta_saida,
+        "Apresentador360_Excel_Final.xlsx"
+    )
+
+    shutil.copy2(
+        TEMPLATE_EXCEL,
+        caminho_saida
+    )
+
+    wb = load_workbook(
+        caminho_saida,
+        data_only=False
+    )
+
+    # Registra a seleção no arquivo para validar
+    # a conexão Streamlit → motor → Excel.
+    #
+    # A aba Planos já existe no modelo.
+    ws = wb["Planos"]
+
+    # Limpa a área de controle.
+    for linha in range(1, 10):
+        ws.cell(
+            linha,
+            20
+        ).value = None
+
+        ws.cell(
+            linha,
+            21
+        ).value = None
+
+    ws.cell(
+        1,
+        20
+    ).value = "ORDEM APRESENTADOR 360"
+
+    for posicao, operadora in enumerate(
+        operadoras_em_ordem,
+        start=1
+    ):
+        ws.cell(
+            posicao + 1,
+            20
+        ).value = posicao
+
+        ws.cell(
+            posicao + 1,
+            21
+        ).value = operadora
+
+    try:
+        wb.calculation.fullCalcOnLoad = True
+        wb.calculation.forceFullCalc = True
+        wb.calculation.calcMode = "auto"
+    except Exception:
+        pass
+
+    wb.save(caminho_saida)
+    wb.close()
+
+    return caminho_saida

@@ -212,7 +212,51 @@ def ultima_coluna_base(
             return colunas[-1]
 
     return None
+def plano_para_apresentacao(plano):
+    if plano is None:
+        return ""
 
+    texto = " ".join(
+        str(plano).strip().split()
+    )
+
+    if not texto:
+        return ""
+
+    partes = texto.split()
+
+    romanos = {
+        "I", "II", "III", "IV", "V",
+        "VI", "VII", "VIII", "IX", "X",
+        "XI", "XII", "XIII", "XIV", "XV",
+    }
+
+    partes_sem_romanos = [
+        parte
+        for parte in partes
+        if parte.upper() not in romanos
+    ]
+
+    return " ".join(
+        partes_sem_romanos
+    ).strip()
+
+
+def identificar_acomodacao(plano):
+    texto = normalizar_base(plano)
+
+    if not texto:
+        return ""
+
+    ultima_parte = texto.split()[-1]
+
+    if ultima_parte == "E":
+        return "Enfermaria"
+
+    if ultima_parte == "A":
+        return "Apartamento"
+
+    return ""
 def gerar_excel_final(
     caminho_matriz,
     operadoras_em_ordem

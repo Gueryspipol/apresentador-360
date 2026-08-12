@@ -604,6 +604,7 @@ def gerar_excel_final(
         ws_faixa[f"B{linha}"] = faixas[faixa]["func"]
         ws_faixa[f"C{linha}"] = faixas[faixa]["dep"]
     # Limpa a área de controle.
+
     for linha in range(1, 10):
         ws.cell(
             linha,

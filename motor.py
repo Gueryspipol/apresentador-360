@@ -1,6 +1,7 @@
 import os
 import shutil
 import tempfile
+import unicodedata
 
 from openpyxl import load_workbook
 
@@ -77,7 +78,140 @@ def encontrar_operadoras(arquivo_excel):
         for operadora in ordem_preferencial
         if operadora in operadoras
     ]
+# =====================================================
+# FUNÇÕES AUXILIARES DA ABA BASE
+# =====================================================
 
+
+def normalizar_base(valor):
+    if valor is None:
+        return ""
+
+    texto = str(valor).strip().upper()
+
+    texto = unicodedata.normalize(
+        "NFKD",
+        texto
+    )
+
+    texto = "".join(
+        caractere
+        for caractere in texto
+        if not unicodedata.combining(
+            caractere
+        )
+    )
+
+    return " ".join(
+        texto.split()
+    )
+
+
+def localizar_cabecalhos_base(ws):
+    """
+    Localiza a linha de cabeçalhos da aba Base
+    sem depender de letras fixas de coluna.
+    """
+
+    cabecalhos = {}
+
+    limite_linhas = min(
+        ws.max_row,
+        20
+    )
+
+    for linha in range(
+        1,
+        limite_linhas + 1
+    ):
+        valores_linha = [
+            normalizar_base(
+                ws.cell(
+                    linha,
+                    coluna
+                ).value
+            )
+            for coluna in range(
+                1,
+                ws.max_column + 1
+            )
+        ]
+
+        if (
+            "NOME" in valores_linha
+            and
+            "FAIXA ETARIA" in valores_linha
+        ):
+            for coluna in range(
+                1,
+                ws.max_column + 1
+            ):
+                texto = normalizar_base(
+                    ws.cell(
+                        linha,
+                        coluna
+                    ).value
+                )
+
+                if not texto:
+                    continue
+
+                cabecalhos.setdefault(
+                    texto,
+                    []
+                ).append(
+                    coluna
+                )
+
+            return (
+                linha,
+                cabecalhos
+            )
+
+    raise ValueError(
+        "Não foi possível localizar o "
+        "cabeçalho da aba Base."
+    )
+
+
+def primeira_coluna_base(
+    cabecalhos,
+    nomes
+):
+    for nome in nomes:
+        nome_normalizado = normalizar_base(
+            nome
+        )
+
+        colunas = cabecalhos.get(
+            nome_normalizado,
+            []
+        )
+
+        if colunas:
+            return colunas[0]
+
+    return None
+
+
+def ultima_coluna_base(
+    cabecalhos,
+    nomes
+):
+    for nome in nomes:
+        nome_normalizado = normalizar_base(
+            nome
+        )
+
+        colunas = cabecalhos.get(
+            nome_normalizado,
+            []
+        )
+
+        if colunas:
+            return colunas[-1]
+
+    return None
 
 def gerar_excel_final(
     caminho_matriz,

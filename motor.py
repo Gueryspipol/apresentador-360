@@ -263,9 +263,9 @@ def identificar_acomodacao(plano):
     
     def ler_registros_base(caminho_matriz):
 
-    wb = load_workbook(
-        caminho_matriz,
-        data_only=True
+         wb = load_workbook(
+             caminho_matriz,
+              data_only=True
     )
 
     if "Base" not in wb.sheetnames:

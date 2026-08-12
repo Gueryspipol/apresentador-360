@@ -257,6 +257,154 @@ def identificar_acomodacao(plano):
         return "Apartamento"
 
     return ""
+    def ler_registros_base(caminho_matriz):
+
+    wb = load_workbook(
+        caminho_matriz,
+        data_only=True
+    )
+
+    if "Base" not in wb.sheetnames:
+        wb.close()
+
+        raise ValueError(
+            "A aba Base não foi encontrada."
+        )
+
+    ws_base = wb["Base"]
+
+    linha_cabecalho, cabecalhos = (
+        localizar_cabecalhos_base(ws_base)
+    )
+
+    coluna_nome = primeira_coluna_base(
+        cabecalhos,
+        ["Nome"]
+    )
+
+    coluna_elegibilidade = (
+        primeira_coluna_base(
+            cabecalhos,
+            ["Elegibilidade"]
+        )
+    )
+
+    coluna_sexo = primeira_coluna_base(
+        cabecalhos,
+        ["Sexo"]
+    )
+
+    coluna_faixa = primeira_coluna_base(
+        cabecalhos,
+        [
+            "Faixa etária",
+            "Faixa etaria"
+        ]
+    )
+
+    coluna_plano = primeira_coluna_base(
+        cabecalhos,
+        [
+            "Plano²",
+            "Plano2"
+        ]
+    )
+
+    if coluna_plano is None:
+        coluna_plano = ultima_coluna_base(
+            cabecalhos,
+            ["Plano"]
+        )
+
+    registros = []
+
+    linhas_vazias = 0
+
+    for linha in range(
+        linha_cabecalho + 1,
+        ws_base.max_row + 1
+    ):
+
+        nome = ws_base.cell(
+            linha,
+            coluna_nome
+        ).value
+
+        elegibilidade = ws_base.cell(
+            linha,
+            coluna_elegibilidade
+        ).value
+
+        plano_original = ws_base.cell(
+            linha,
+            coluna_plano
+        ).value
+
+        faixa = ws_base.cell(
+            linha,
+            coluna_faixa
+        ).value
+
+        sexo = (
+            ws_base.cell(
+                linha,
+                coluna_sexo
+            ).value
+            if coluna_sexo
+            else None
+        )
+
+        if (
+            not str(nome or "").strip()
+            and not str(elegibilidade or "").strip()
+            and not str(plano_original or "").strip()
+        ):
+
+            linhas_vazias += 1
+
+            if linhas_vazias >= 20:
+                break
+
+            continue
+
+        linhas_vazias = 0
+
+        elegibilidade_norm = (
+            normalizar_base(
+                elegibilidade
+            )
+        )
+
+        if elegibilidade_norm not in {
+            "T",
+            "D",
+            "TITULAR",
+            "DEPENDENTE",
+            "FUNCIONARIO",
+            "FUNCIONARIO(A)"
+        }:
+            continue
+
+        plano = plano_para_apresentacao(
+            plano_original
+        )
+
+        if not plano:
+            continue
+
+        registros.append({
+            "nome": str(nome).strip(),
+            "sexo": normalizar_base(sexo),
+            "faixa": str(
+                faixa or ""
+            ).strip(),
+            "plano": plano,
+            "elegibilidade": elegibilidade_norm
+        })
+
+    wb.close()
+
+    return registros
 def gerar_excel_final(
     caminho_matriz,
     operadoras_em_ordem

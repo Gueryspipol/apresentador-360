@@ -212,6 +212,7 @@ def ultima_coluna_base(
             return colunas[-1]
 
     return None
+    
 def plano_para_apresentacao(plano):
     if plano is None:
         return ""

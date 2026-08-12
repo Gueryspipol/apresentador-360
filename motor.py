@@ -505,7 +505,7 @@ def gerar_excel_final(
     # a conexão Streamlit → motor → Excel.
     #
     # A aba Planos já existe no modelo.
-      ws = wb["Planos"]
+    ws = wb["Planos"]
 
     ws["T10"] = len(registros_base)
 

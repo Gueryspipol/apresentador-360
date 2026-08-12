@@ -457,7 +457,7 @@ def gerar_excel_final(
             "Não é permitido repetir operadoras."
         )
 
-      operadoras_encontradas = encontrar_operadoras(
+    operadoras_encontradas = encontrar_operadoras(
         caminho_matriz
     )
 

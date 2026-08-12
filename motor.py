@@ -551,59 +551,7 @@ def gerar_excel_final(
     ws_eleg["B6"] = total_funcionarios
     ws_eleg["B7"] = total_dependentes
 
-    ws_faixa = wb["Faixa Etária"]
-
-    faixas = {
-        "00-18": {"func": 0, "dep": 0},
-        "19-23": {"func": 0, "dep": 0},
-        "24-28": {"func": 0, "dep": 0},
-        "29-33": {"func": 0, "dep": 0},
-        "34-38": {"func": 0, "dep": 0},
-        "39-43": {"func": 0, "dep": 0},
-        "44-48": {"func": 0, "dep": 0},
-        "49-53": {"func": 0, "dep": 0},
-        "54-58": {"func": 0, "dep": 0},
-        "59+": {"func": 0, "dep": 0},
-    }
-
-    for r in registros_base:
-
-        faixa = r["faixa"].strip()
-
-        if faixa not in faixas:
-            continue
-
-        if r["elegibilidade"] in {
-            "T",
-            "TITULAR",
-            "FUNCIONARIO",
-            "FUNCIONARIO(A)"
-        }:
-            faixas[faixa]["func"] += 1
-
-        elif r["elegibilidade"] in {
-            "D",
-            "DEPENDENTE"
-        }:
-            faixas[faixa]["dep"] += 1
-
-    linhas = {
-        "00-18": 2,
-        "19-23": 3,
-        "24-28": 4,
-        "29-33": 5,
-        "34-38": 6,
-        "39-43": 7,
-        "44-48": 8,
-        "49-53": 9,
-        "54-58": 10,
-        "59+": 11,
-    }
-
-    for faixa, linha in linhas.items():
-        ws_faixa[f"B{linha}"] = faixas[faixa]["func"]
-        ws_faixa[f"C{linha}"] = faixas[faixa]["dep"]
-    # Limpa a área de controle.
+        # Limpa a área de controle.
 
     for linha in range(1, 10):
         ws.cell(

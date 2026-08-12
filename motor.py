@@ -212,7 +212,8 @@ def ultima_coluna_base(
             return colunas[-1]
 
     return None
-    
+
+
 def plano_para_apresentacao(plano):
     if plano is None:
         return ""
@@ -258,6 +259,7 @@ def identificar_acomodacao(plano):
         return "Apartamento"
 
     return ""
+
     
     def ler_registros_base(caminho_matriz):
 
@@ -407,7 +409,8 @@ def identificar_acomodacao(plano):
     wb.close()
 
     return registros
-    
+
+
 def gerar_excel_final(
     caminho_matriz,
     operadoras_em_ordem

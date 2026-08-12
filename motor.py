@@ -465,6 +465,14 @@ def gerar_excel_final(
         caminho_matriz
     )
 
+    registros_base = ler_registros_base(
+    caminho_matriz
+)
+
+if not registros_base:
+    raise ValueError(
+        "Nenhum registro válido foi encontrado na aba Base."
+    )
     invalidas = [
         operadora
         for operadora in operadoras_em_ordem

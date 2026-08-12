@@ -428,7 +428,10 @@ def gerar_excel_final(
     O preenchimento completo das abas será conectado
     nesta mesma função, sem arquivos 7A, 7B, 7C ou 7D.
     """
-
+    if not registros_base:
+        raise ValueError(
+            "Nenhum registro válido foi encontrado na aba Base."
+)
     if not os.path.exists(caminho_matriz):
         raise FileNotFoundError(
             "A matriz temporária não foi encontrada."

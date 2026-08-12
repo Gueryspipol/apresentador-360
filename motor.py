@@ -261,7 +261,7 @@ def identificar_acomodacao(plano):
     return ""
 
     
-    def ler_registros_base(caminho_matriz):
+def ler_registros_base(caminho_matriz):
 
          wb = load_workbook(
              caminho_matriz,
@@ -469,9 +469,9 @@ def gerar_excel_final(
     caminho_matriz
 )
 
-if not registros_base:
-    raise ValueError(
-        "Nenhum registro válido foi encontrado na aba Base."
+    if not registros_base:
+        raise ValueError(
+            "Nenhum registro válido foi encontrado na aba Base."
     )
     invalidas = [
         operadora

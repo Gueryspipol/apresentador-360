@@ -501,7 +501,8 @@ def gerar_excel_final(
     #
     # A aba Planos já existe no modelo.
     ws = wb["Planos"]
-
+    
+    ws["T10"] = len(registros_base)
     # Limpa a área de controle.
     for linha in range(1, 10):
         ws.cell(

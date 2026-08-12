@@ -260,12 +260,11 @@ def identificar_acomodacao(plano):
 
     return ""
 
-    
-def ler_registros_base(caminho_matriz):
 
-         wb = load_workbook(
-             caminho_matriz,
-              data_only=True
+def ler_registros_base(caminho_matriz):
+    wb = load_workbook(
+        caminho_matriz,
+        data_only=True
     )
 
     if "Base" not in wb.sheetnames:
@@ -276,7 +275,7 @@ def ler_registros_base(caminho_matriz):
         )
 
     ws_base = wb["Base"]
-
+    
     linha_cabecalho, cabecalhos = (
         localizar_cabecalhos_base(ws_base)
     )
@@ -428,10 +427,7 @@ def gerar_excel_final(
     O preenchimento completo das abas será conectado
     nesta mesma função, sem arquivos 7A, 7B, 7C ou 7D.
     """
-    if not registros_base:
-        raise ValueError(
-            "Nenhum registro válido foi encontrado na aba Base."
-)
+   
     if not os.path.exists(caminho_matriz):
         raise FileNotFoundError(
             "A matriz temporária não foi encontrada."
@@ -461,18 +457,19 @@ def gerar_excel_final(
             "Não é permitido repetir operadoras."
         )
 
-    operadoras_encontradas = encontrar_operadoras(
+      operadoras_encontradas = encontrar_operadoras(
         caminho_matriz
     )
 
     registros_base = ler_registros_base(
-    caminho_matriz
-)
+        caminho_matriz
+    )
 
     if not registros_base:
         raise ValueError(
             "Nenhum registro válido foi encontrado na aba Base."
-    )
+        )
+
     invalidas = [
         operadora
         for operadora in operadoras_em_ordem

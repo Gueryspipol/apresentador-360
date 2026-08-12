@@ -257,6 +257,7 @@ def identificar_acomodacao(plano):
         return "Apartamento"
 
     return ""
+    
     def ler_registros_base(caminho_matriz):
 
     wb = load_workbook(
@@ -405,6 +406,7 @@ def identificar_acomodacao(plano):
     wb.close()
 
     return registros
+    
 def gerar_excel_final(
     caminho_matriz,
     operadoras_em_ordem

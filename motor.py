@@ -505,11 +505,11 @@ def gerar_excel_final(
     # a conexão Streamlit → motor → Excel.
     #
     # A aba Planos já existe no modelo.
-    ws = wb["Planos"]
-    
+      ws = wb["Planos"]
+
     ws["T10"] = len(registros_base)
 
-        ws_eleg = wb["Elegibilidade"]
+    ws_eleg = wb["Elegibilidade"]
 
     total_vidas = len(registros_base)
 
@@ -520,7 +520,7 @@ def gerar_excel_final(
             "T",
             "TITULAR",
             "FUNCIONARIO",
-            "FUNCIONARIO(A)"
+            "FUNCIONARIO(A)",
         }
     )
 
@@ -529,20 +529,26 @@ def gerar_excel_final(
         for r in registros_base
         if r["elegibilidade"] in {
             "D",
-            "DEPENDENTE"
+            "DEPENDENTE",
         }
     )
 
     total_feminino = sum(
         1
         for r in registros_base
-        if r["sexo"] == "F"
+        if r["sexo"] in {
+            "F",
+            "FEMININO",
+        }
     )
 
     total_masculino = sum(
         1
         for r in registros_base
-        if r["sexo"] == "M"
+        if r["sexo"] in {
+            "M",
+            "MASCULINO",
+        }
     )
 
     ws_eleg["B2"] = total_vidas
@@ -551,9 +557,9 @@ def gerar_excel_final(
     ws_eleg["B6"] = total_funcionarios
     ws_eleg["B7"] = total_dependentes
 
-        # Limpa a área de controle.
-
+    # Limpa a área de controle.
     for linha in range(1, 10):
+        
         ws.cell(
             linha,
             20
